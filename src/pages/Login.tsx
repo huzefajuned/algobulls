@@ -1,6 +1,3 @@
-import React from "react";
-
-import { Form, Checkbox, Input, Button } from "antd";
 import loginImg from "../Images/login.jpeg";
 
 import Auth from "../Common/Auth";

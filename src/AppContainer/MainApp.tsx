@@ -1,66 +1,80 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignUp from "../components/SignUp";
-import Login from "../components/Login";
-import Error from "../components/Error";
-import Dashboard from "../pages/Dashboard";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
+import AppRoutes from "./Routes";
 import { toast } from "react-toastify";
+import { useState } from "react";
+import Loading from "../components/Loading";
+export const logoutUser = () => {
+  signOut(auth);
+};
 
 const MainApp = () => {
+  const [loading, setLoading] = useState(false);
+
   // when user submit the form---
   const onSubmit = (values: any) => {
     const { title, email, password } = values;
 
     if (title == "SignUp") {
-      regUser(email, password);
+      registerWithEmailAndPassword(email, password);
     } else {
-      logUser(email, password);
+      logInWithEmailAndPassword(email, password);
     }
   };
 
-  // Register a user-
-  // save registered user on local strorage-
+  const logInWithEmailAndPassword = async (email: string, password: string) => {
+    try {
+      const res = await signInWithEmailAndPassword(auth, email, password);
 
-  async function regUser(email: string, password: string) {
-    const payload = { email, password };
-
-    await localStorage.setItem("regUser", JSON.stringify(payload));
-
-    if (localStorage.getItem("regUser")) {
-      toast.success("User created successfully");
-      // once user Registered
-      //login user automatically
-      logUser(email, password);
-    } else {
-      toast.error("Something went Wrong!");
-    }
-  }
-
-  async function logUser(email: string, password: string) {
-    const payload = { email, password };
-
-    // validate credentials--
-    if (localStorage.getItem("regUser")) {
-      const userData = await localStorage.getItem("regUser");
-
-      // compare old userData with Login Credentails---
-      if (userData == JSON.stringify(payload)) {
-        toast.success("User loggedIn");
-      } else {
-        toast.info("User not found!");
+      if (res) {
+        toast.success("User Logged In");
       }
-    } else {
-      toast.info("User not found! Register Now");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
     }
-  }
+  };
+
+
+  const registerWithEmailAndPassword = async (
+    email: string,
+    password: string
+  ) => {
+    try {
+      setLoading(true);
+
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const user = res.user;
+      console.log("ress", res);
+      if (res) {
+        toast.success("User created");
+        logInWithEmailAndPassword(email, password);
+      }
+      setLoading(false);
+
+      await addDoc(collection(db, "users"), {
+        uid: user.uid,
+        name,
+        authProvider: "local",
+        email,
+      });
+    } catch (err) {
+      toast.error(err.message);
+      setLoading(false);
+
+    } 
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="*" element={<Error />} />
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/signup" element={<SignUp onSubmit={onSubmit} />} />
-        <Route path="/login" element={<Login onSubmit={onSubmit} />} />
-      </Routes>
-    </Router>
+    <>
+    {loading && <Loading />}
+      <AppRoutes onSubmit={onSubmit} />
+    </>
   );
 };
 
