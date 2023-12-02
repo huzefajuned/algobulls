@@ -3,7 +3,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Layout, Menu, theme } from "antd";
+import { Avatar, Button, Layout, Menu } from "antd";
 import {  useNavigate } from "react-router-dom";
 import Posts from "../components/Posts";
 import Profile from "../components/Profile";
