@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu } from "antd";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Posts from "../components/Posts";
 import Profile from "../components/Profile";
 import Bookmarks from "../components/Bookmarks";
@@ -21,39 +18,34 @@ const AvatarImg: string =
   "https://cdn-icons-png.flaticon.com/512/9131/9131529.png";
 // Add other components (Item3, Item4, etc.) as needed
 
-
-
-
 const Dashboard: React.FC = () => {
-  var timeout=5000
+  var timeout = 5000;
   const [selectedKey, setSelectedKey] = useState("1"); // Default selected key
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  
   useEffect(() => {
-    let intervalId:any;
-  
+    let intervalId: any;
+
     if (!currentUser) {
       intervalId = setInterval(() => {
-        toast.info('You are not logged in! Please log in.');
-      }, timeout);
+        toast.info("You are not logged in! Please log in.");
 
+        setTimeout(() => {
+          navigate("/login");
+        }, 10000);
+      }, timeout);
     }
 
-  
     // Cleanup the interval when the component is unmounted or when the user logs in
     return () => {
       clearInterval(intervalId);
     };
   }, [currentUser, timeout]);
 
-
-  
-
   useEffect(() => {
     // Listen for changes in authentication state
-    const unsubscribe = auth.onAuthStateChanged((user:any) => {
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
     });
 
@@ -61,22 +53,12 @@ const Dashboard: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-
-  useEffect(()=>{
-
-  },[])
-
-
-
-  console.log('currentUser inside Dsshborad',currentUser)
-
   const menuItems = [
     {
       key: "1",
       icon: <UserOutlined />,
       label: "Posts",
       component: Posts,
-      
     },
     {
       key: "2",
@@ -111,9 +93,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout className="p-10 h-screen w-screen ">
-      {
-        !currentUser && <Loading />
-      }
+      {!currentUser && <Loading />}
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -131,22 +111,30 @@ const Dashboard: React.FC = () => {
               key={item.key}
               icon={item.icon}
               onClick={() => handleMenuClick(item.key)}
-              disabled={ currentUser==null}
+              disabled={currentUser == null}
             >
               <span>{item.label}</span>
             </Menu.Item>
           ))}
 
           <div className="bg-blue-500 absolute bottom-0 w-full flex flex-row justify-center p-2">
-           
-
-            {
-              !currentUser ?   <Button type="primary" className="bg-blue-500" onClick={()=>navigate('/login')}>
-              Login
-            </Button>: <Button type="primary" className="bg-red-500" onClick={()=>logoutUser()}>
-              Logout
-            </Button>
-            }
+            {!currentUser ? (
+              <Button
+                type="primary"
+                className="bg-blue-500"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                className="bg-red-500"
+                onClick={() => logoutUser()}
+              >
+                Logout
+              </Button>
+            )}
           </div>
         </Menu>
       </Sider>
