@@ -4,7 +4,7 @@ import {
   VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu, theme } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import Posts from "../components/Posts";
 import Profile from "../components/Profile";
 import Bookmarks from "../components/Bookmarks";
@@ -15,7 +15,7 @@ import Loading from "../components/Loading";
 import { logoutUser } from "../AppContainer/MainApp";
 import CreatePost from "../components/CreatePost";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 const AvatarImg: string =
   "https://cdn-icons-png.flaticon.com/512/9131/9131529.png";
@@ -26,7 +26,6 @@ const AvatarImg: string =
 
 const Dashboard: React.FC = () => {
   var timeout=5000
-  const { token: { colorBgContainer } } = theme.useToken();
   const [selectedKey, setSelectedKey] = useState("1"); // Default selected key
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
