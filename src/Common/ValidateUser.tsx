@@ -6,7 +6,7 @@ export const useUserValidation = () => {
 
   useEffect(() => {
     const validateUser = () => {
-      const user = localStorage.getItem("logUser");
+      const user:any = localStorage.getItem("logUser");
       const isLoggedIn = !!user; // Check if user is logged in
 
       setIsUserLoggedIn(isLoggedIn);

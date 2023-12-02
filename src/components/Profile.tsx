@@ -1,7 +1,5 @@
 // ProfileUpdateForm.js
 import { Form, Input, Upload, Button, DatePicker } from "antd";
-import { useEffect, useState } from "react";
-import { auth } from "../firebase";
 
 const Profile = () => {
   const [form] = Form.useForm();

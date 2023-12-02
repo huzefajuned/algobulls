@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
@@ -10,7 +9,7 @@ import Posts from "../components/Posts";
 import Profile from "../components/Profile";
 import Bookmarks from "../components/Bookmarks";
 import Likes from "../components/Likes";
-import { auth, logout } from "../firebase";
+import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { logoutUser } from "../AppContainer/MainApp";

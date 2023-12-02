@@ -1,4 +1,3 @@
-import React from "react";
 import { Form, Input, Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { db } from "../firebase";

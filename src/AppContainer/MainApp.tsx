@@ -34,7 +34,7 @@ const MainApp = () => {
       if (res) {
         toast.success("User Logged In");
       }
-    } catch (err) {
+    } catch (err:any) {
       console.error(err);
       toast.error(err.message);
     }
@@ -63,7 +63,7 @@ const MainApp = () => {
         authProvider: "local",
         email,
       });
-    } catch (err) {
+    } catch (err:any) {
       toast.error(err.message);
       setLoading(false);
 
