@@ -9,8 +9,6 @@ const Profile = () => {
     console.log("Received values:", values);
   };
 
-
-
   return (
     <div className="flex justify-center items-center h-full">
       <Form

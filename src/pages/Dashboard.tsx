@@ -6,10 +6,11 @@ import Posts from "../components/Posts";
 import Profile from "../components/Profile";
 import Bookmarks from "../components/Bookmarks";
 import Likes from "../components/Likes";
-import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import { logoutUser } from "../AppContainer/MainApp";
 import CreatePost from "../components/CreatePost";
+import MyPosts from "../components/MyPosts";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 const { Header, Content, Sider } = Layout;
 
@@ -20,7 +21,7 @@ const AvatarImg: string =
 const Dashboard: React.FC = () => {
   var timeout = 5000;
   const [selectedKey, setSelectedKey] = useState("1"); // Default selected key
-  const [currentUser, setCurrentUser] = useState(null);
+  const currentUser = useCurrentUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,16 +42,6 @@ const Dashboard: React.FC = () => {
       clearInterval(intervalId);
     };
   }, [currentUser, timeout]);
-
-  useEffect(() => {
-    // Listen for changes in authentication state
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
-      setCurrentUser(user);
-    });
-
-    // Cleanup the subscription when the component is unmounted
-    return () => unsubscribe();
-  }, []);
 
   const menuItems = [
     {
@@ -81,6 +72,12 @@ const Dashboard: React.FC = () => {
     {
       key: "5",
       icon: <VideoCameraOutlined />,
+      label: "MyPosts",
+      component: MyPosts,
+    },
+    {
+      key: "6",
+      icon: <VideoCameraOutlined />,
       label: "Likes",
       component: Likes,
     },
@@ -97,9 +94,6 @@ const Dashboard: React.FC = () => {
         collapsedWidth="0"
         onBreakpoint={(broken) => {
           console.log(broken);
-        }}
-        onCollapse={(collapsed, type) => {
-          console.log(collapsed, type);
         }}
       >
         <div className="demo-logo-vertical" />

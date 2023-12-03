@@ -1,4 +1,4 @@
-import { Form, Input, Button, Upload, message } from "antd";
+import { Form, Input, Button, Upload, message, Avatar } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { db } from "../firebase";
 import { addDoc, collection } from "firebase/firestore";
@@ -11,8 +11,11 @@ import { toast } from "react-toastify";
 const CreatePost = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   console.log("currentUserId isss", currentUserId);
+
+  console.log("imagePreview", imagePreview);
 
   useEffect(() => {
     // Listen for changes in authentication state
@@ -24,6 +27,8 @@ const CreatePost = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {});
+
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
@@ -31,11 +36,7 @@ const CreatePost = () => {
 
       console.log("image", image);
 
-      const thumbnail = image ? await convertToBase64(image.file) : null;
-
-      console.log("thumbnail", thumbnail);
-      // Check if a file is uploaded
-      // const image = ;
+      const thumbnail: any = image ? await convertToBase64(image.file) : null;
 
       const payload: any = {
         title,
@@ -63,14 +64,6 @@ const CreatePost = () => {
     }
   };
 
-  // Custom Upload Button
-  const uploadButton = (
-    <div>
-      <UploadOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
   return (
     <div className="w-full  h-full flex flex-col  justify-center items-center  ">
       <Form
@@ -78,7 +71,7 @@ const CreatePost = () => {
         onFinish={onFinish}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        className="p-10 shadow-2xl rounded-xl border-2 border-gray-300"
+        className="p-10 shadow-2xl rounded-xl border-2 border-gray-300 w-1/2"
       >
         <Form.Item
           label="Title"
@@ -105,8 +98,21 @@ const CreatePost = () => {
           <Upload
             accept="image/*"
             beforeUpload={() => false} // Prevent default upload behavior
+            onChange={(info) => {
+              if (info.file.status === "done") {
+                // Set the image preview
+                const reader = new FileReader();
+                reader.onload = (e: any) => {
+                  setImagePreview(e.target?.result as string);
+                };
+                reader.readAsDataURL(info.file.originFileObj as any);
+              }
+            }}
           >
-            {uploadButton}
+            <div>
+              <UploadOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>{" "}
           </Upload>
         </Form.Item>
 
@@ -115,6 +121,7 @@ const CreatePost = () => {
             Create Post
           </Button>
         </Form.Item>
+        {imagePreview && <Avatar src={imagePreview} />}
       </Form>
       {loading && <Loading />}
     </div>
