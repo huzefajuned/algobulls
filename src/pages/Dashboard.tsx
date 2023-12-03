@@ -8,7 +8,6 @@ import Bookmarks from "../components/Bookmarks";
 import Likes from "../components/Likes";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
-import Loading from "../components/Loading";
 import { logoutUser } from "../AppContainer/MainApp";
 import CreatePost from "../components/CreatePost";
 
@@ -93,7 +92,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout className="p-10 h-screen w-screen ">
-      {!currentUser && <Loading />}
       <Sider
         breakpoint="lg"
         collapsedWidth="0"

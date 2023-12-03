@@ -12,14 +12,10 @@ import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import { afterNavigate } from "../Common/common";
 
 const AppRoutes = () => {
   const [loading, setLoading] = useState(false);
-
-  function afterNavigate() {
-    const host = window.location.origin;
-    window.location.href = host;
-  }
 
   const logInWithEmailAndPassword = async (email: string, password: string) => {
     try {

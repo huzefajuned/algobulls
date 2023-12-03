@@ -2,36 +2,64 @@ import { Form, Input, Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { db } from "../firebase";
 import { addDoc, collection } from "firebase/firestore";
+import { afterNavigate, convertToBase64 } from "../Common/common";
+import { useEffect, useState } from "react";
+import { auth } from "../firebase";
+import Loading from "./Loading";
+import { toast } from "react-toastify";
 
 const CreatePost = () => {
-  const onFinish = async (
-    values = { title: "sasas", description: "sasasas", image: "sasasasa" }
-  ) => {
-    console.log("Received values:", values);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  console.log("currentUserId isss", currentUserId);
+
+  useEffect(() => {
+    // Listen for changes in authentication state
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+      setCurrentUserId(user.uid);
+    });
+
+    // Cleanup the subscription when the component is unmounted
+    return () => unsubscribe();
+  }, []);
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
     try {
-      // Extract values from the form submission
-      //   const { title, description, image } = values;
+      const { title, description, image } = values;
 
-      const title = "sasa";
-      const description = "asasasa";
-      const thumbnail = "asas";
+      console.log("image", image);
 
-      // Add data to Firestore
-      const docRef = await addDoc(collection(db, "post"), {
+      const thumbnail = image ? await convertToBase64(image.file) : null;
+
+      console.log("thumbnail", thumbnail);
+      // Check if a file is uploaded
+      // const image = ;
+
+      const payload: any = {
         title,
         description,
         thumbnail,
-      });
+        createdBy: currentUserId ?? currentUserId, // Add the createdBy field with the user's UID
+      };
+
+      // Add data to Firestore
+      const docRef = await addDoc(collection(db, "posts"), payload);
 
       console.log("Document written with ID: ", docRef.id);
 
       // Display success message
-      message.success("Post created successfully!");
+      toast.success("Post created successfully!");
+      setTimeout(() => {
+        afterNavigate();
+      }, 2000);
     } catch (error) {
       console.error("Error adding data to Firestore: ", error);
       // Display error message
       message.error("Failed to create post");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,11 +100,14 @@ const CreatePost = () => {
         <Form.Item
           name="image"
           label="Upload Image"
-          valuePropName="fileList"
-          getValueFromEvent={(e) => e.fileList}
           rules={[{ required: true, message: "Please upload an image!" }]}
         >
-          <Upload>{uploadButton}</Upload>
+          <Upload
+            accept="image/*"
+            beforeUpload={() => false} // Prevent default upload behavior
+          >
+            {uploadButton}
+          </Upload>
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -85,6 +116,7 @@ const CreatePost = () => {
           </Button>
         </Form.Item>
       </Form>
+      {loading && <Loading />}
     </div>
   );
 };
