@@ -30,10 +30,6 @@ const Dashboard: React.FC = () => {
     if (!currentUser) {
       intervalId = setInterval(() => {
         toast.info("You are not logged in! Please log in.");
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 10000);
       }, timeout);
     }
 
