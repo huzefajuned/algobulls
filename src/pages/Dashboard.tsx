@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <Layout className="p-10 h-screen w-screen ">
+    <Layout className="p-5  h-screen w-screen bg-white  ">
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -93,7 +93,12 @@ const Dashboard: React.FC = () => {
         }}
       >
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" mode="inline" selectedKeys={[selectedKey]}>
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={[selectedKey]}
+          className=" h-full"
+        >
           {menuItems.map((item) => (
             <Menu.Item
               key={item.key}
@@ -126,10 +131,9 @@ const Dashboard: React.FC = () => {
           </div>
         </Menu>
       </Sider>
-      <Layout className=" rounded-md">
-        <Header className=" flex flex-row justify-between items-center">
-          <h2>test</h2>
-          <Avatar src={AvatarImg} />
+      <Layout className="">
+        <Header className=" flex flex-row justify-end items-center">
+          <Avatar src={AvatarImg} size={50} />
         </Header>
         <Content className="bg-bl">
           <div className=" h-full">

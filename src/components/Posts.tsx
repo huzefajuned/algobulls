@@ -1,6 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { Card, message } from "antd";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import Loading from "./Loading";
 import { HeartFilled } from "@ant-design/icons";
@@ -17,61 +24,63 @@ interface Post {
 const Posts: FC = () => {
   const currentUser = useCurrentUser();
 
-  console.log("currentUser inside postss", currentUser);
+  // console.log("currentUser inside postss", currentUser);
 
   const [loading, setLoading] = useState<Boolean>(false);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [userEmails, setUserEmails] = useState<{ [key: string]: string }>({});
+  const [userEmails, setUserEmails] = useState("");
 
   const onLikePost = (post: any) => {
     const { id } = post;
     alert(id);
   };
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, "posts"));
+      const fetchedPosts: Post[] = [];
+
+      querySnapshot.forEach((doc) => {
+        fetchedPosts.push({ id: doc.id, ...doc.data() } as Post);
+      });
+
+      setPosts(fetchedPosts);
+    } catch (error) {
+      console.error("Error fetching posts from Firestore:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUsersForPosts = async () => {
+    // console.log("posts", posts.createdBy);
+
+    for (let creator of posts) {
+      const uid = creator.createdBy;
+
+      // Query to fetch user  by the current uid
+      const myPostsQuery = query(
+        collection(db, "users"),
+        where("uid", "==", uid)
+      );
+      const querySnapshot = await getDocs(myPostsQuery);
+
+      const fetchedUser: any = [];
+
+      querySnapshot.forEach((doc) => {
+        fetchedUser?.push({ id: doc.id, ...doc.data() } as any);
+      });
+
+      setUserEmails(fetchedUser[0]);
+    }
+  };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const querySnapshot = await getDocs(collection(db, "posts"));
-        const fetchedPosts: Post[] = [];
-
-        querySnapshot.forEach((doc) => {
-          fetchedPosts.push({ id: doc.id, ...doc.data() } as Post);
-        });
-
-        setPosts(fetchedPosts);
-
-        // Fetch user emails
-        const uniqueUserIds = Array.from(
-          new Set(fetchedPosts.map((post) => post.createdBy))
-        );
-        const userEmailsMap: { [key: string]: string } = {};
-
-        for (const uid of uniqueUserIds) {
-          const userDoc = await getDoc(doc(db, "users", uid));
-          console.log("userDoc -<<", userDoc);
-          if (userDoc.exists()) {
-            const userEmail = userDoc.data()?.email;
-            if (userEmail) {
-              userEmailsMap[uid] = userEmail;
-            }
-          } else {
-            console.log(`User document with ID ${uid} does not exist.`);
-          }
-        }
-
-        console.log("User Emails Map:", userEmailsMap);
-
-        setUserEmails(userEmailsMap);
-      } catch (error) {
-        console.error("Error fetching posts from Firestore:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPosts();
+    fetchUsersForPosts();
   }, []);
+
+  console.log("userEmails", userEmails);
 
   return (
     <div className="h-full overflow-y-auto p-4">
@@ -88,12 +97,12 @@ const Posts: FC = () => {
               <img
                 alt={post.title}
                 src={post.thumbnail}
-                className="h-40 w-full object-cover mb-4"
+                className="h-40 w-full object-cover mb-4 rounded-md"
               />
               <p>{post.description}</p>
               <div className=" flex flex-row justify-between items-center text-2xl my-2">
                 <p className=" text-sm text-gray-500">
-                  Created by: {userEmails[post?.createdBy]}
+                  Created by: {userEmails?.email}
                 </p>
                 {currentUser ? (
                   <HeartFilled
