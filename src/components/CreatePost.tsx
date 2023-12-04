@@ -6,7 +6,6 @@ import { afterNavigate, convertToBase64 } from "../Common/common";
 import { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import Loading from "./Loading";
-import { toast } from "react-toastify";
 
 const CreatePost = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -51,7 +50,7 @@ const CreatePost = () => {
       console.log("Document written with ID: ", docRef.id);
 
       // Display success message
-      toast.success("Post created successfully!");
+      message.success("Post created successfully!");
       setTimeout(() => {
         afterNavigate();
       }, 2000);

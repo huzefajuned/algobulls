@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@ant-design/pro-layout": "^7.17.16",
+    "@capacitor/android": "^5.5.1",
+    "@capacitor/cli": "^5.5.1",
+    "@capacitor/core": "^5.5.1",
+    "@capacitor/ios": "^5.5.1",
     "@types/react-router-dom": "^5.3.3",
     "antd": "^5.11.5",
     "firebase": "^10.7.0",

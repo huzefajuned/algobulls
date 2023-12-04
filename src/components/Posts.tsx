@@ -1,8 +1,10 @@
 import { FC, useEffect, useState } from "react";
-import { Card } from "antd";
+import { Card, message } from "antd";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Loading from "./Loading";
+import { HeartFilled } from "@ant-design/icons";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 interface Post {
   id: string;
@@ -13,9 +15,18 @@ interface Post {
 }
 
 const Posts: FC = () => {
+  const currentUser = useCurrentUser();
+
+  console.log("currentUser inside postss", currentUser);
+
   const [loading, setLoading] = useState<Boolean>(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [userEmails, setUserEmails] = useState<{ [key: string]: string }>({});
+
+  const onLikePost = (post: any) => {
+    const { id } = post;
+    alert(id);
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -72,7 +83,7 @@ const Posts: FC = () => {
             <p className="text-2xl text-red-600 p-5"> 0 post found!!</p>
           </div>
         ) : (
-          posts.map((post) => (
+          posts.map((post: any) => (
             <Card key={post.id} title={post.title} className="mb-4">
               <img
                 alt={post.title}
@@ -80,9 +91,22 @@ const Posts: FC = () => {
                 className="h-40 w-full object-cover mb-4"
               />
               <p>{post.description}</p>
-              <p className="mt-4 text-sm text-gray-500">
-                Created by: {userEmails[post.createdBy]}
-              </p>
+              <div className=" flex flex-row justify-between items-center text-2xl my-2">
+                <p className=" text-sm text-gray-500">
+                  Created by: {userEmails[post?.createdBy]}
+                </p>
+                {currentUser ? (
+                  <HeartFilled
+                    className="hover:text-red-400 cursor-pointer  "
+                    onClick={() => onLikePost(post)}
+                  />
+                ) : (
+                  <HeartFilled
+                    className="hover:text-red-400 cursor-pointer  "
+                    onClick={() => message.info("please login to like post")}
+                  />
+                )}
+              </div>
             </Card>
           ))
         )}

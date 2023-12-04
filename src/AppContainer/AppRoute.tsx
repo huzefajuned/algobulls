@@ -10,9 +10,9 @@ import {
 } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { afterNavigate } from "../Common/common";
+import { message } from "antd";
 
 const AppRoutes = () => {
   const [loading, setLoading] = useState(false);
@@ -24,12 +24,12 @@ const AppRoutes = () => {
       const res = await signInWithEmailAndPassword(auth, email, password);
 
       if (res) {
-        toast.success("User Logged In");
+        message.success("User Logged In");
         afterNavigate();
       }
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message);
+      message.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ const AppRoutes = () => {
       const user = res.user;
       console.log("ress", res);
       if (res) {
-        toast.success("User created");
+        message.success("User created");
         logInWithEmailAndPassword(email, password);
       }
 
@@ -56,7 +56,7 @@ const AppRoutes = () => {
         email,
       });
     } catch (err: any) {
-      toast.error(err.message);
+      message.error(err.message);
     } finally {
       setLoading(false);
     }

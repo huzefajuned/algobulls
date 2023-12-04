@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import { Avatar, Button, Layout, Menu } from "antd";
+import { Avatar, Button, Layout, Menu, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import Posts from "../components/Posts";
 import Profile from "../components/Profile";
 import Bookmarks from "../components/Bookmarks";
 import Likes from "../components/Likes";
-import { toast } from "react-toastify";
 import { logoutUser } from "../AppContainer/MainApp";
 import CreatePost from "../components/CreatePost";
 import MyPosts from "../components/MyPosts";
@@ -19,7 +18,7 @@ const AvatarImg: string =
 // Add other components (Item3, Item4, etc.) as needed
 
 const Dashboard: React.FC = () => {
-  var timeout = 5000;
+  const [timeout, setTimeout] = useState(10000);
   const [selectedKey, setSelectedKey] = useState("1"); // Default selected key
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
@@ -29,7 +28,8 @@ const Dashboard: React.FC = () => {
 
     if (!currentUser) {
       intervalId = setInterval(() => {
-        toast.info("You are not logged in! Please log in.");
+        message.info("You are not logged in! Please log in.");
+        setTimeout((prev) => prev + 10000);
       }, timeout);
     }
 
